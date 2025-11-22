@@ -1,16 +1,76 @@
-# React + Vite
+# Authentication React App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a React.js application converted from HTML pages. It includes authentication flows for login, signup, forgot password, OTP verification, and change password.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Login page
+- Sign Up page
+- Forgot Password page
+- OTP Verification page
+- Change Password page
+- React Router for navigation
+- Bootstrap 5 for styling
+- Responsive design
 
-## React Compiler
+## Installation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Install dependencies:
+```bash
+npm install
+```
 
-## Expanding the ESLint configuration
+## Running the Application
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Start the development server:
+```bash
+npm start
+```
+
+The app will open at [http://localhost:3000](http://localhost:3000)
+
+## Build for Production
+
+Create a production build:
+```bash
+npm run build
+```
+
+## Project Structure
+
+```
+spit project/
+├── public/
+│   ├── images/
+│   │   ├── bg.png
+│   │   └── mlogo.png
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── Login.js
+│   │   ├── SignUp.js
+│   │   ├── ForgotPassword.js
+│   │   ├── OTP.js
+│   │   └── ChangePassword.js
+│   ├── App.js
+│   ├── index.js
+│   └── index.css
+├── package.json
+└── README.md
+```
+
+## Routes
+
+- `/` or `/login` - Login page
+- `/signup` - Sign Up page
+- `/forgot-password` - Forgot Password page
+- `/otp` - OTP Verification page
+- `/change-password` - Change Password page
+
+## Technologies Used
+
+- React 18.2.0
+- React Router DOM 6.20.0
+- Bootstrap 5.3.0
+- React Scripts 5.0.1
+
