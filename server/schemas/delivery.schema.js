@@ -1,15 +1,14 @@
 import { z } from "zod";
 
-export const createReceiptSchema = z.object({
-  supplier: z.string().optional(),
+export const createDeliverySchema = z.object({
+  customer: z.string().optional(),
   createdById: z.number().optional(),
   items: z.array(
     z.object({ productId: z.string(), quantity: z.number().int().positive() })
   ),
-  expectedAt: z.string().optional(),
 });
 
-export const updateReceiptSchema = z.object({
-  supplier: z.string().optional(),
+export const updateDeliverySchema = z.object({
+  customer: z.string().optional(),
   status: z.string().optional(),
 });
