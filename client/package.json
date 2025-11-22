@@ -1,7 +1,7 @@
 {
-  "name": "spit-project",
+  "name": "neon-dashboard-react",
   "version": "1.0.0",
-  "description": "React authentication application",
+  "description": "Neon Dashboard - React Application",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",

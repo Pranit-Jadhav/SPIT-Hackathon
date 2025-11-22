@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Delivery Operations - Neon Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(to bottom, #05060a, #041025);
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+      }
+
+      .wrapper {
+        width: 90%;
+        padding: 40px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 18px 30px;
+        border-radius: 18px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .logo-box {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .logo-icon {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #8be9fd, #7c4dff);
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .title-box p {
+        font-size: 12px;
+        opacity: 0.7;
+      }
+
+      .nav {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        font-size: 13px;
+      }
+
+      .nav a {
+        color: #fff;
+        text-decoration: none;
+        opacity: 0.8;
+        transition: opacity 0.3s;
+      }
+
+      .nav a:hover {
+        opacity: 1;
+      }
+
+      .user-avatar {
+        background: linear-gradient(135deg, #7c4dff, #5588a0);
+        padding: 8px 18px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+      }
+
+      /* Toolbar */
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 15px 25px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .search-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 10px 18px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        flex: 1;
+        max-width: 400px;
+      }
+
+      .search-box input {
+        background: transparent;
+        border: none;
+        outline: none;
+        color: #fff;
+        font-size: 14px;
+        flex: 1;
+      }
+
+      .search-box input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .view-toggle {
+        display: flex;
+        gap: 8px;
+      }
+
+      .view-btn {
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-size: 13px;
+      }
+
+      .view-btn.active {
+        background: linear-gradient(135deg, #7c4dff, #58e6d9);
+        border-color: transparent;
+      }
+
+      .new-btn {
+        padding: 10px 22px;
+        background: linear-gradient(135deg, #ff79c6, #ffb86b);
+        border: none;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .new-btn:hover {
+        transform: scale(1.05);
+      }
+
+      /* Table View */
+      .table-container {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      th {
+        padding: 15px 20px;
+        text-align: left;
+        font-size: 13px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      td {
+        padding: 18px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 14px;
+      }
+
+      tbody tr {
+        transition: background 0.2s;
+        cursor: pointer;
+      }
+
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .status-badge {
+        padding: 5px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+      }
+
+      .status-draft {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+
+      .status-waiting {
+        background: rgba(255, 204, 102, 0.2);
+        color: #ffcc66;
+      }
+
+      .status-ready {
+        background: rgba(88, 230, 217, 0.2);
+        color: #58e6d9;
+      }
+
+      .status-done {
+        background: rgba(124, 77, 255, 0.2);
+        color: #7c4dff;
+      }
+
+      .status-late {
+        background: rgba(255, 107, 107, 0.2);
+        color: #ff6b6b;
+      }
+
+      /* Kanban View */
+      .kanban-container {
+        display: none;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+
+      .kanban-container.active {
+        display: grid;
+      }
+
+      .kanban-column {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 20px;
+        min-height: 500px;
+      }
+
+      .kanban-header {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .kanban-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .kanban-card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(124, 77, 255, 0.5);
+      }
+
+      .kanban-card h4 {
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+
+      .kanban-card p {
+        font-size: 12px;
+        opacity: 0.7;
+        margin: 4px 0;
+      }
+
+      .out-of-stock {
+        background: rgba(255, 107, 107, 0.1);
+        border-color: rgba(255, 107, 107, 0.3);
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: linear-gradient(to bottom, #0a0e1a, #0f1625);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 22px;
+        padding: 35px;
+        width: 90%;
+        max-width: 700px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .close-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: #fff;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+        transition: background 0.2s;
+      }
+
+      .close-btn:hover {
+        background: rgba(255, 107, 107, 0.3);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        opacity: 0.9;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: #7c4dff;
+      }
+
+      .form-group input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+      }
+
+      .product-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr auto;
+        gap: 15px;
+        margin-bottom: 15px;
+        align-items: end;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 30px;
+        padding-top: 25px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+        font-size: 14px;
+        color: #fff;
+      }
+
+      .btn:hover {
+        transform: scale(1.05);
+      }
+
+      .btn-cancel {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .btn-validate {
+        background: linear-gradient(135deg, #7c4dff, #58e6d9);
+      }
+
+      .btn-print {
+        background: linear-gradient(135deg, #ff79c6, #ffb86b);
+      }
+
+      .btn-print:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .workflow-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+      }
+
+      .workflow-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        position: relative;
+      }
+
+      .workflow-step::after {
+        content: "";
+        position: absolute;
+        top: 15px;
+        left: 60%;
+        width: 80%;
+        height: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 0;
+      }
+
+      .workflow-step:last-child::after {
+        display: none;
+      }
+
+      .workflow-step.active::after {
+        background: linear-gradient(90deg, #7c4dff, #58e6d9);
+      }
+
+      .step-circle {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .workflow-step.active .step-circle {
+        background: linear-gradient(135deg, #7c4dff, #58e6d9);
+      }
+
+      .step-label {
+        font-size: 11px;
+        opacity: 0.7;
+      }
+
+      .workflow-step.active .step-label {
+        opacity: 1;
+        color: #58e6d9;
+      }
+
+      .alert {
+        background: rgba(255, 107, 107, 0.15);
+        border: 1px solid rgba(255, 107, 107, 0.3);
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        color: #ff6b6b;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .stock-status {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 10px;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 6px;
+      }
+
+      .stock-status.out {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+      }
+
+      .stock-status.in {
+        color: #58e6d9;
+        background: rgba(88, 230, 217, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo-box" onclick="window.location.href='index.html'">
+          <div class="logo-icon">+</div>
+          <div class="title-box">
+            <h1>Delivery Operations</h1>
+            <p>Manage Outgoing Stock • Track Deliveries</p>
+          </div>
+        </div>
+
+        <div class="nav">
+          <a href="index.html">Dashboard</a>
+          <a href="receipt.html">Receipt</a>
+          <span>Profile</span>
+          <span>Settings</span>
+          <button class="user-avatar">A</button>
+        </div>
+      </header>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-box">
+          <span>🔍</span>
+          <input
+            type="text"
+            placeholder="Search deliveries..."
+            id="searchInput"
+          />
+        </div>
+        <div class="view-toggle">
+          <button class="view-btn active" onclick="showTableView()">
+            List
+          </button>
+          <button class="view-btn" onclick="showKanbanView()">Kanban</button>
+        </div>
+        <button class="new-btn" onclick="openNewDelivery()">
+          + New Delivery
+        </button>
+      </div>
+
+      <!-- Table View -->
+      <div class="table-container" id="tableView">
+        <table>
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>To</th>
+              <th>Schedule Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="deliveryTableBody">
+            <tr onclick="openDeliveryDetail('WH/OUT/0001')">
+              <td>WH/OUT/0001</td>
+              <td>Customer A</td>
+              <td>2024-01-18</td>
+              <td><span class="status-badge status-ready">Ready</span></td>
+            </tr>
+            <tr
+              onclick="openDeliveryDetail('WH/OUT/0002')"
+              class="out-of-stock-row"
+            >
+              <td>WH/OUT/0002</td>
+              <td>Customer B</td>
+              <td>2024-01-15</td>
+              <td><span class="status-badge status-late">Late</span></td>
+            </tr>
+            <tr onclick="openDeliveryDetail('WH/OUT/0003')">
+              <td>WH/OUT/0003</td>
+              <td>Customer C</td>
+              <td>2024-01-19</td>
+              <td><span class="status-badge status-waiting">Waiting</span></td>
+            </tr>
+            <tr onclick="openDeliveryDetail('WH/OUT/0004')">
+              <td>WH/OUT/0004</td>
+              <td>Customer D</td>
+              <td>2024-01-20</td>
+              <td><span class="status-badge status-draft">Draft</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Kanban View -->
+      <div class="kanban-container" id="kanbanView">
+        <div class="kanban-column">
+          <div class="kanban-header">Draft</div>
+          <div class="kanban-card" onclick="openDeliveryDetail('WH/OUT/0004')">
+            <h4>WH/OUT/0004</h4>
+            <p>To: Customer D</p>
+            <p>Date: 2024-01-20</p>
+          </div>
+        </div>
+        <div class="kanban-column">
+          <div class="kanban-header">Waiting</div>
+          <div class="kanban-card" onclick="openDeliveryDetail('WH/OUT/0003')">
+            <h4>WH/OUT/0003</h4>
+            <p>To: Customer C</p>
+            <p>Date: 2024-01-19</p>
+          </div>
+        </div>
+        <div class="kanban-column">
+          <div class="kanban-header">Ready</div>
+          <div class="kanban-card" onclick="openDeliveryDetail('WH/OUT/0001')">
+            <h4>WH/OUT/0001</h4>
+            <p>To: Customer A</p>
+            <p>Date: 2024-01-18</p>
+          </div>
+        </div>
+        <div class="kanban-column">
+          <div class="kanban-header">Done</div>
+        </div>
+      </div>
+
+      <!-- New Delivery Modal -->
+      <div class="modal" id="newDeliveryModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Delivery</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+          </div>
+
+          <div class="workflow-steps">
+            <div class="workflow-step active" id="step-draft">
+              <div class="step-circle">1</div>
+              <div class="step-label">Draft</div>
+            </div>
+            <div class="workflow-step" id="step-waiting">
+              <div class="step-circle">2</div>
+              <div class="step-label">Waiting</div>
+            </div>
+            <div class="workflow-step" id="step-ready">
+              <div class="step-circle">3</div>
+              <div class="step-label">Ready</div>
+            </div>
+            <div class="workflow-step" id="step-done">
+              <div class="step-circle">4</div>
+              <div class="step-label">Done</div>
+            </div>
+          </div>
+
+          <div class="alert" id="outOfStockAlert" style="display: none">
+            ⚠️ Some products are out of stock. Please check availability.
+          </div>
+
+          <form id="deliveryForm">
+            <div class="form-group">
+              <label>Reference</label>
+              <input
+                type="text"
+                value="WH/OUT/0001"
+                placeholder="WH/OUT/0001"
+                readonly
+                id="deliveryReference"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Delivery Address</label>
+              <textarea
+                rows="3"
+                placeholder="Enter delivery address"
+                required
+                id="deliveryAddress"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Schedule Date</label>
+              <input type="date" required id="scheduleDate" />
+            </div>
+
+            <div class="form-group">
+              <label>Responsible</label>
+              <input
+                type="text"
+                placeholder="Current user"
+                readonly
+                id="responsible"
+                value="Current User"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Operation Type</label>
+              <select required id="operationType">
+                <option value="">Select type</option>
+                <option>Standard Delivery</option>
+                <option>Express Delivery</option>
+                <option>Return</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Products</label>
+              <div id="productsContainer">
+                <div class="product-row">
+                  <input
+                    type="text"
+                    placeholder="[DESK001] Desk"
+                    class="product-input"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Quantity"
+                    min="1"
+                    class="quantity-input"
+                    onchange="checkStock(this)"
+                  />
+                  <span class="stock-status"></span>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="btn"
+                style="margin-top: 10px; background: rgba(255, 255, 255, 0.1)"
+                onclick="addProductRow()"
+              >
+                Add New product
+              </button>
+            </div>
+
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-cancel"
+                onclick="closeModal()"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="btn btn-print"
+                id="printBtn"
+                disabled
+                onclick="printDelivery()"
+              >
+                Print
+              </button>
+              <button type="submit" class="btn btn-validate" id="validateBtn">
+                Validate
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let currentStatus = "draft"; // draft, waiting, ready, done
+      let deliveryCounter = 1;
+
+      function showTableView() {
+        document.getElementById("tableView").style.display = "block";
+        document.getElementById("kanbanView").classList.remove("active");
+        document.querySelectorAll(".view-btn")[0].classList.add("active");
+        document.querySelectorAll(".view-btn")[1].classList.remove("active");
+      }
+
+      function showKanbanView() {
+        document.getElementById("tableView").style.display = "none";
+        document.getElementById("kanbanView").classList.add("active");
+        document.querySelectorAll(".view-btn")[0].classList.remove("active");
+        document.querySelectorAll(".view-btn")[1].classList.add("active");
+      }
+
+      function openNewDelivery() {
+        currentStatus = "draft";
+        deliveryCounter++;
+        document.getElementById("deliveryReference").value = `WH/OUT/${String(
+          deliveryCounter
+        ).padStart(4, "0")}`;
+        updateWorkflowUI();
+        document.getElementById("newDeliveryModal").classList.add("active");
+      }
+
+      function closeModal() {
+        document.getElementById("newDeliveryModal").classList.remove("active");
+        currentStatus = "draft";
+        updateWorkflowUI();
+        document.getElementById("outOfStockAlert").style.display = "none";
+        // Reset form
+        document.getElementById("deliveryForm").reset();
+        document.getElementById("productsContainer").innerHTML = `
+          <div class="product-row">
+            <input type="text" placeholder="[DESK001] Desk" class="product-input" />
+            <input type="number" placeholder="Quantity" min="1" class="quantity-input" onchange="checkStock(this)" />
+            <span class="stock-status"></span>
+          </div>
+        `;
+      }
+
+      function updateWorkflowUI() {
+        const steps = document.querySelectorAll(".workflow-step");
+        const printBtn = document.getElementById("printBtn");
+
+        steps.forEach((step, index) => {
+          step.classList.remove("active");
+          if (currentStatus === "draft" && index === 0) {
+            step.classList.add("active");
+          } else if (currentStatus === "waiting" && index <= 1) {
+            step.classList.add("active");
+          } else if (currentStatus === "ready" && index <= 2) {
+            step.classList.add("active");
+          } else if (currentStatus === "done" && index <= 3) {
+            step.classList.add("active");
+          }
+        });
+
+        if (currentStatus === "done") {
+          printBtn.disabled = false;
+        } else {
+          printBtn.disabled = true;
+        }
+      }
+
+      function checkStock(input) {
+        const quantity = parseInt(input.value) || 0;
+        const productInput = input.previousElementSibling;
+        const stockStatus = input.nextElementSibling;
+        const alertBox = document.getElementById("outOfStockAlert");
+
+        // Simulate stock check - in real app, this would check actual stock
+        const availableStock = 5; // Example: only 5 items available
+
+        if (quantity > 0) {
+          if (quantity > availableStock) {
+            stockStatus.textContent = "⚠️ Out of Stock";
+            stockStatus.className = "stock-status out";
+            productInput.style.borderColor = "#ff6b6b";
+            input.style.borderColor = "#ff6b6b";
+            alertBox.style.display = "flex";
+          } else {
+            stockStatus.textContent = "✓ In Stock";
+            stockStatus.className = "stock-status in";
+            productInput.style.borderColor = "";
+            input.style.borderColor = "";
+            // Check if all products are in stock
+            const allInStock = Array.from(
+              document.querySelectorAll(".quantity-input")
+            ).every((qty) => {
+              const qtyVal = parseInt(qty.value) || 0;
+              return qtyVal === 0 || qtyVal <= availableStock;
+            });
+            if (allInStock) {
+              alertBox.style.display = "none";
+            }
+          }
+        } else {
+          stockStatus.textContent = "";
+          stockStatus.className = "";
+          productInput.style.borderColor = "";
+          input.style.borderColor = "";
+        }
+      }
+
+      function printDelivery() {
+        if (currentStatus === "done") {
+          window.print();
+        } else {
+          alert("Print is only available when status is Done");
+        }
+      }
+
+      function openDeliveryDetail(ref) {
+        openNewDelivery();
+        document.getElementById("deliveryReference").value = ref;
+        // In a real app, you'd load the delivery data here
+        if (ref === "WH/OUT/0002") {
+          document.getElementById("outOfStockAlert").style.display = "flex";
+        }
+      }
+
+      function addProductRow() {
+        const container = document.getElementById("productsContainer");
+        const productRow = document.createElement("div");
+        productRow.className = "product-row";
+        productRow.innerHTML = `
+          <input type="text" placeholder="[DESK001] Desk" class="product-input" />
+          <input type="number" placeholder="Quantity" min="1" class="quantity-input" onchange="checkStock(this)" />
+          <span class="stock-status"></span>
+        `;
+        container.appendChild(productRow);
+      }
+
+      document
+        .getElementById("deliveryForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          alert("Delivery validated successfully!");
+          closeModal();
+        });
+
+      // Search functionality
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", function (e) {
+          const searchTerm = e.target.value.toLowerCase();
+          const rows = document.querySelectorAll("#deliveryTableBody tr");
+          rows.forEach((row) => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(searchTerm) ? "" : "none";
+          });
+        });
+
+      // Close modal on outside click
+      document
+        .getElementById("newDeliveryModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            closeModal();
+          }
+        });
+
+      // Initialize UI
+      updateWorkflowUI();
+    </script>
+  </body>
+</html>

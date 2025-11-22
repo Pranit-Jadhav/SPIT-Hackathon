@@ -1,13 +1,332 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>client</title>
+    <title>Neon Dashboard</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(to bottom, #05060a, #041025);
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+      }
+
+      .wrapper {
+        width: 85%;
+        padding: 40px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 18px 30px;
+        border-radius: 18px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .logo-box {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .logo-icon {
+        width: 45px;
+        height: 45px;
+        background: linear-gradient(135deg, #8be9fd, #7c4dff);
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+      }
+
+      .title-box p {
+        font-size: 12px;
+        opacity: 0.7;
+      }
+
+      .nav {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        font-size: 13px;
+      }
+
+      .user-avatar {
+        background: linear-gradient(135deg, #7c4dff, #5588a0);
+        padding: 8px 18px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+      }
+
+      /* Cards */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .card {
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 18px;
+        backdrop-filter: blur(8px);
+      }
+
+      .primary-btn {
+        margin: 10px 0;
+        padding: 10px 18px;
+        background: linear-gradient(135deg, #ff79c6, #ffb86b);
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+        color: #fff;
+        transition: transform 0.2s;
+      }
+
+      .primary-btn:hover {
+        transform: scale(1.05);
+      }
+
+      .info {
+        font-size: 13px;
+        opacity: 0.8;
+      }
+
+      .late {
+        color: #ff6b6b;
+      }
+
+      .warning {
+        color: #ffcc66;
+      }
+
+      /* Large Interactive Area */
+      .big-card {
+        height: 50vh;
+        min-height: 380px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 22px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Floating Neon Elements */
+      .float-circle {
+        width: 120px;
+        height: 120px;
+        position: absolute;
+        top: 18%;
+        left: 12%;
+        border-radius: 50%;
+        background: radial-gradient(circle, #7c4dffaa, #7c4dff00);
+        animation: floatY 5s ease-in-out infinite alternate;
+        filter: blur(8px);
+      }
+
+      .float-diamond {
+        width: 110px;
+        height: 110px;
+        position: absolute;
+        bottom: 15%;
+        left: 40%;
+        background: linear-gradient(135deg, #58e6d9aa, #58e6d900);
+        transform: rotate(45deg);
+        animation: floatRotate 7s ease-in-out infinite alternate;
+        filter: blur(5px);
+      }
+
+      .float-glow {
+        width: 200px;
+        height: 200px;
+        position: absolute;
+        top: -40px;
+        right: -50px;
+        background: radial-gradient(circle, #ff79c644, transparent);
+        border-radius: 50%;
+        filter: blur(35px);
+        animation: glowPulse 6s ease-in-out infinite;
+      }
+
+      .float-line {
+        position: absolute;
+        width: 160px;
+        height: 4px;
+        bottom: 28%;
+        right: 18%;
+        background: linear-gradient(90deg, transparent, #8be9fd, transparent);
+        animation: slideLine 3s linear infinite;
+      }
+
+      /* Animated Grid */
+      .big-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(
+            rgba(255, 255, 255, 0.03) 1px,
+            transparent 1px
+          ),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 70px 70px;
+        animation: gridMove 10s linear infinite;
+        opacity: 0.3;
+      }
+
+      /* CTA Button */
+      .cta {
+        position: absolute;
+        right: 25px;
+        bottom: 25px;
+        padding: 13px 22px;
+        font-weight: bold;
+        border-radius: 25px;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, #7c4dff, #58e6d9);
+        box-shadow: 0 12px 35px rgba(124, 77, 255, 0.25);
+        transition: 0.25s;
+        color: #fff;
+      }
+      .cta:hover {
+        transform: scale(1.08);
+      }
+
+      /* Animations */
+      @keyframes floatY {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-25px);
+        }
+      }
+
+      @keyframes floatRotate {
+        from {
+          transform: rotate(45deg) translateY(0);
+        }
+        to {
+          transform: rotate(45deg) translateY(-35px);
+        }
+      }
+
+      @keyframes glowPulse {
+        0% {
+          opacity: 0.25;
+        }
+        50% {
+          opacity: 0.8;
+        }
+        100% {
+          opacity: 0.25;
+        }
+      }
+
+      @keyframes slideLine {
+        0% {
+          transform: translateX(-50px);
+          opacity: 0;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(50px);
+          opacity: 0;
+        }
+      }
+
+      @keyframes gridMove {
+        0% {
+          background-position: 0 0;
+        }
+        100% {
+          background-position: 140px 140px;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <div class="wrapper">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo-box">
+          <div class="logo-icon">+</div>
+          <div class="title-box">
+            <h1>Dashboard</h1>
+            <p>Operations • Stock • Move History</p>
+          </div>
+        </div>
+
+        <div class="nav">
+          <span>Profile</span>
+          <span>Settings</span>
+          <button class="user-avatar">A</button>
+        </div>
+      </header>
+
+      <!-- Cards -->
+      <div class="cards">
+        <div class="card">
+          <h2>Receipt</h2>
+          <a
+            href="receipt.html"
+            style="text-decoration: none; display: inline-block"
+          >
+            <button class="primary-btn">4 to Receive</button>
+          </a>
+          <p class="info">1 <span class="late">Late</span></p>
+          <p class="info">6 Operations</p>
+        </div>
+
+        <div class="card">
+          <h2>Delivery</h2>
+          <a
+            href="delivery.html"
+            style="text-decoration: none; display: inline-block"
+          >
+            <button class="primary-btn">4 to Deliver</button>
+          </a>
+          <p class="info">1 <span class="warning">Late</span></p>
+          <p class="info">2 waiting</p>
+          <p class="info">6 Operations</p>
+        </div>
+      </div>
+
+      <!-- Interactive Animated Area -->
+      <div class="big-card">
+        <!-- Floating Decorations -->
+        <div class="float-circle"></div>
+        <div class="float-diamond"></div>
+        <div class="float-glow"></div>
+        <div class="float-line"></div>
+
+        <!-- main CTA -->
+        <button class="cta">Advanced Mallard</button>
+      </div>
+    </div>
   </body>
 </html>
